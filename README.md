@@ -21,7 +21,7 @@
 | Участок статистического анализа | `Q[16..27]` |
 
 ## 3. Блок-схема
-![Блок-схема](https://github.com/inmyrestlessdreamsiseethattown/Kursovoy/blob/main/block_scheme.drawio(2).png)
+![Блок-схема](https://github.com/inmyrestlessdreamsiseethattown/Kursovoy/blob/main/block_scheme.drawio(3).png)
 
 ## 4. Алгоритм работы
 
