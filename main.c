@@ -1,7 +1,8 @@
+#define _CRT_SECURE_NO_DEPRECATE
 #include <stdio.h>
 #include <math.h>
 #include <locale.h>
-#define _CRT_SECURE_NO_DEPRECATE
+
 
 #define N 50
 #define X_MIN 5.0
