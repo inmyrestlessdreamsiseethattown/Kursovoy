@@ -1,4 +1,3 @@
-
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
@@ -8,11 +7,24 @@
 #define X_MIN 5.0
 #define X_MAX 70.0
 
+#define X_LOW 20.0
+#define X_HIGH 45.0
+#define X_CENTER 32.5
+
+#define Q_LOW_OFFSET 10.0
+#define Q_MID_OFFSET 50.0
+#define Q_HIGH_OFFSET 60.0
+
+#define Q_LOW_DIVISOR 6.0
+#define Q_MID_FACTOR 3.0
+#define Q_HIGH_FACTOR 2.0
+#define SQRT_OFFSET 1.0
+
 #define Q0 50.0
 #define DELTA_Q 7.0
 
 #define STATE_NORMAL 0
-#define STATE_ALARM  1
+#define STATE_ALARM 1
 
 int read_input(double *x);
 double compute_q(double x);
@@ -21,14 +33,15 @@ void compute_statistics(void);
 
 int main(void)
 {
-    setlocale(LC_ALL, "");
-
     double x;
     double q;
     int state;
 
-    printf("Вариант 33. Мониторинг реактора: расход азота\n");
-    printf("Программа преобразует показание датчика расхода азота\n");
+    setlocale(LC_ALL, "");
+
+    printf("Курсовой проект. Вариант 33\n");
+    printf("Мониторинг реактора: расход азота\n");
+    printf("Программа преобразует показание датчика ");
     printf("в показатель Q и контролирует состояние процесса.\n\n");
 
     printf("Введите расход азота X (%.0f..%.0f л/мин): ",
@@ -42,17 +55,14 @@ int main(void)
 
     if (x < X_MIN || x > X_MAX)
     {
-        printf("Ошибка: X должен находиться в диапазоне "
-               "%.0f..%.0f л/мин.\n", X_MIN, X_MAX);
+        printf("Ошибка: X вне допустимого диапазона.\n");
         return 1;
     }
 
     q = compute_q(x);
-
     state = control(q);
 
-    printf("\nРезультаты измерения:\n");
-    printf("X = %.2f л/мин\n", x);
+    printf("\nX = %.2f л/мин\n", x);
     printf("Q = %.2f\n", q);
 
     if (state == STATE_ALARM)
@@ -63,7 +73,7 @@ int main(void)
     {
         printf("Состояние: НОРМА\n");
     }
- 
+
     compute_statistics();
 
     return 0;
@@ -76,17 +86,20 @@ int read_input(double *x)
 
 double compute_q(double x)
 {
-    if (x < 20.0)
+    if (x < X_LOW)
     {
-        return (x - 20.0) * (x - 20.0) / 6.0 + 10.0;
+        return (x - X_LOW) * (x - X_LOW)
+               / Q_LOW_DIVISOR + Q_LOW_OFFSET;
     }
-    else if (x <= 45.0)
+    else if (x <= X_HIGH)
     {
-        return 3.0 * (x - 32.5) + 50.0;
+        return Q_MID_FACTOR * (x - X_CENTER)
+               + Q_MID_OFFSET;
     }
     else
     {
-        return 2.0 * sqrt(x - 45.0 + 1.0) + 60.0;
+        return Q_HIGH_FACTOR * sqrt(x - X_HIGH + SQRT_OFFSET)
+               + Q_HIGH_OFFSET;
     }
 }
 
@@ -100,7 +113,8 @@ int control(double q)
     return STATE_NORMAL;
 }
 
+// Заглушка статистики для КТ2
 void compute_statistics(void)
 {
-    
+   
 }
