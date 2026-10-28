@@ -1,3 +1,4 @@
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
@@ -11,12 +12,11 @@
 #define DELTA_Q 7.0
 
 #define STATE_NORMAL 0
-#define STATE_ALARM 1
+#define STATE_ALARM  1
 
-double read_input(void);
+int read_input(double *x);
 double compute_q(double x);
 int control(double q);
-void print_state(int code);
 void compute_statistics(void);
 
 int main(void)
@@ -27,48 +27,52 @@ int main(void)
     double q;
     int state;
 
-    printf("Мониторинг реактора: расход азота\n");
-    printf("Вариант 33\n\n");
+    printf("Вариант 33. Мониторинг реактора: расход азота\n");
+    printf("Программа преобразует показание датчика расхода азота\n");
+    printf("в показатель Q и контролирует состояние процесса.\n\n");
 
-    x = read_input();
+    printf("Введите расход азота X (%.0f..%.0f л/мин): ",
+           X_MIN, X_MAX);
+
+    if (!read_input(&x))
+    {
+        printf("Ошибка: необходимо ввести число.\n");
+        return 1;
+    }
+
+    if (x < X_MIN || x > X_MAX)
+    {
+        printf("Ошибка: X должен находиться в диапазоне "
+               "%.0f..%.0f л/мин.\n", X_MIN, X_MAX);
+        return 1;
+    }
 
     q = compute_q(x);
 
     state = control(q);
 
-    printf("\nX = %.2f л/мин\n", x);
+    printf("\nРезультаты измерения:\n");
+    printf("X = %.2f л/мин\n", x);
     printf("Q = %.2f\n", q);
 
-    print_state(state);
-
+    if (state == STATE_ALARM)
+    {
+        printf("Состояние: ТРЕВОГА\n");
+    }
+    else
+    {
+        printf("Состояние: НОРМА\n");
+    }
+ 
     compute_statistics();
 
     return 0;
 }
 
-
-double read_input(void)
+int read_input(double *x)
 {
-    double x;
-
-    printf("Введите расход азота X (%.0f..%.0f л/мин): ",
-        X_MIN, X_MAX);
-
-    if (scanf("%lf", &x) != 1)
-    {
-        printf("Ошибка: введено не число.\n");
-        return X_MIN;
-    }
-
-    if (x < X_MIN || x > X_MAX)
-    {
-        printf("Ошибка: значение вне допустимого диапазона.\n");
-        return X_MIN;
-    }
-
-    return x;
+    return scanf("%lf", x) == 1;
 }
-
 
 double compute_q(double x)
 {
@@ -86,26 +90,17 @@ double compute_q(double x)
     }
 }
 
-
 int control(double q)
 {
     if (fabs(q - Q0) > DELTA_Q)
+    {
         return STATE_ALARM;
+    }
 
     return STATE_NORMAL;
 }
 
-
-void print_state(int code)
-{
-    if (code == STATE_ALARM)
-        printf("Состояние: ТРЕВОГА\n");
-    else
-        printf("Состояние: НОРМА\n");
-}
-
-
 void compute_statistics(void)
 {
-
+    
 }
