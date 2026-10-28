@@ -1,0 +1,12 @@
+*.exe
+*.o
+*.obj
+*.out
+*.pdb
+
+.vscode/
+.DS_Store
+
+Debug/
+Release/
+x64/
